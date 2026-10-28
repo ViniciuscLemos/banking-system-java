@@ -184,6 +184,11 @@ public class Main {
                 statement.forEach(t -> System.out.println(colored(t)));
             }
             System.out.println(line);
+            if (!statement.isEmpty()) {
+                BankService.Totals totals = BankService.totals(statement);
+                System.out.println("Money in:  " + Colors.green(Money.format(totals.moneyIn())));
+                System.out.println("Money out: " + Colors.red(Money.format(totals.moneyOut())));
+            }
             System.out.println("Current balance: " + Money.format(account.getBalance()));
         } catch (RuntimeException e) {
             System.out.println(Colors.red("Error: " + e.getMessage()));

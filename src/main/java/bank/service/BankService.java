@@ -130,6 +130,22 @@ public class BankService {
         return repo.listStatement(accountId);
     }
 
+    public record Totals(BigDecimal moneyIn, BigDecimal moneyOut) {}
+
+    /** What came in and what went out, for the bottom of the statement. */
+    public static Totals totals(List<Transaction> statement) {
+        BigDecimal in = BigDecimal.ZERO;
+        BigDecimal out = BigDecimal.ZERO;
+        for (Transaction t : statement) {
+            if (t.isCredit()) {
+                in = in.add(t.getAmount());
+            } else {
+                out = out.add(t.getAmount());
+            }
+        }
+        return new Totals(in, out);
+    }
+
     public List<Account> listAccounts() {
         return repo.listAll();
     }

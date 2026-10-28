@@ -177,6 +177,19 @@ class BankServiceTest {
     }
 
     @Test
+    void statementTotals() {
+        Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("100"));
+        Account joao = service.openAccount("João", CPF_JOAO, Account.AccountType.CHECKING, money("0"));
+        service.withdraw(maria.getId(), money("20"), null);
+        service.transfer(maria.getId(), joao.getId(), money("30.50"));
+        service.deposit(maria.getId(), money("5"), null);
+
+        BankService.Totals totals = BankService.totals(service.getStatement(maria.getId()));
+        assertEquals(money("105.00"), totals.moneyIn());
+        assertEquals(money("50.50"), totals.moneyOut());
+    }
+
+    @Test
     void findsAccountByIdOrCpf() {
         Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("0"));
         assertEquals(maria.getId(), service.findByIdOrCpf(maria.getId().toLowerCase()).orElseThrow().getId());
