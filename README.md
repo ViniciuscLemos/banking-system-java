@@ -25,7 +25,7 @@ mvn test
 
 ## What it looks like
 
-A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red:
+A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red (and the total of each at the bottom):
 
 ![A withdrawal, an invalid amount and the statement in the terminal](docs/screenshot.png)
 
@@ -33,7 +33,7 @@ Opening an account (the CPF check digits are validated, so a made-up number is r
 
 ![Opening an account with an invalid CPF, then a valid one, a transfer and the list of accounts](docs/screenshot-accounts.png)
 
-Right after you type the ID, the program shows whose account it is. If you get the ID wrong, you find out right away, not after typing the amount. And the transfer only happens after you confirm seeing the name of who's getting the money.
+Wherever it asks for the account you can type the ID or the CPF (with or without the dots), since nobody remembers an ID like `B9117A50`. Right after that, the program shows whose account it is. If you get the ID wrong, you find out right away, not after typing the amount. And the transfer only happens after you confirm seeing the name of who's getting the money.
 
 On Windows, if accented names look weird in the terminal, run `chcp 65001` first.
 
