@@ -175,4 +175,13 @@ class BankServiceTest {
         service.closeAccount(maria.getId());
         assertEquals(money("4.50"), service.totalBalance());
     }
+
+    @Test
+    void findsAccountByIdOrCpf() {
+        Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("0"));
+        assertEquals(maria.getId(), service.findByIdOrCpf(maria.getId().toLowerCase()).orElseThrow().getId());
+        assertEquals(maria.getId(), service.findByIdOrCpf("529.982.247-25").orElseThrow().getId());
+        assertTrue(service.findByIdOrCpf(CPF_JOAO).isEmpty());
+        assertTrue(service.findByIdOrCpf("nope").isEmpty());
+    }
 }

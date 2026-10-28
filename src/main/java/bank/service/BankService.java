@@ -138,6 +138,16 @@ public class BankService {
         return repo.findById(id);
     }
 
+    /** Nobody remembers an 8 character ID, so the menu also takes the CPF (with or without dots). */
+    public Optional<Account> findByIdOrCpf(String text) {
+        String clean = text.trim().toUpperCase();
+        Optional<Account> byId = repo.findById(clean);
+        if (byId.isPresent() || !Cpf.isValid(clean)) {
+            return byId;
+        }
+        return repo.findByCpf(Cpf.clean(clean));
+    }
+
     public BigDecimal totalBalance() {
         return listAccounts().stream()
             .filter(Account::isActive)

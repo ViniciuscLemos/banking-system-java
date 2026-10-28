@@ -102,7 +102,7 @@ public class Main {
 
     private static void makeDeposit() {
         System.out.println("\n--- DEPOSIT ---");
-        Account target = readAccount("Account ID: ");
+        Account target = readAccount("Account ID or CPF: ");
         if (target == null) return;
         String id = target.getId();
         System.out.print("Amount: $");
@@ -121,7 +121,7 @@ public class Main {
 
     private static void makeWithdrawal() {
         System.out.println("\n--- WITHDRAW ---");
-        Account target = readAccount("Account ID: ");
+        Account target = readAccount("Account ID or CPF: ");
         if (target == null) return;
         String id = target.getId();
         System.out.print("Amount: $");
@@ -138,9 +138,9 @@ public class Main {
 
     private static void makeTransfer() {
         System.out.println("\n--- TRANSFER ---");
-        Account source = readAccount("Source account ID: ");
+        Account source = readAccount("Source account (ID or CPF): ");
         if (source == null) return;
-        Account target = readAccount("Target account ID: ");
+        Account target = readAccount("Target account (ID or CPF): ");
         if (target == null) return;
         System.out.print("Amount: $");
         BigDecimal amount = readAmount();
@@ -164,7 +164,7 @@ public class Main {
 
     private static void showStatement() {
         System.out.println("\n--- STATEMENT ---");
-        Account account = readAccount("Account ID: ");
+        Account account = readAccount("Account ID or CPF: ");
         if (account == null) return;
 
         try {
@@ -211,7 +211,7 @@ public class Main {
 
     private static void closeAccount() {
         System.out.println("\n--- CLOSE ACCOUNT ---");
-        Account account = readAccount("Account ID: ");
+        Account account = readAccount("Account ID or CPF: ");
         if (account == null) return;
         System.out.print("Close the account of " + account.getHolder() + "? (y/N): ");
         if (!scanner.nextLine().trim().equalsIgnoreCase("y")) {
@@ -240,8 +240,8 @@ public class Main {
     /** Asks for the ID and checks right away that the account exists, before asking the rest. */
     private static Account readAccount(String prompt) {
         System.out.print(prompt);
-        String id = scanner.nextLine().trim().toUpperCase();
-        Account account = service.findById(id).orElse(null);
+        String id = scanner.nextLine().trim();
+        Account account = service.findByIdOrCpf(id).orElse(null);
         if (account == null) {
             System.out.println(Colors.red("Account not found: " + id));
         } else {
