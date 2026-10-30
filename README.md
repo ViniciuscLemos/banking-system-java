@@ -25,7 +25,7 @@ mvn test
 
 ## What it looks like
 
-A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red (and the total of each at the bottom):
+A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red (and the total of each at the bottom). It also asks if you want only the last N days:
 
 ![A withdrawal, an invalid amount and the statement in the terminal](docs/screenshot.png)
 

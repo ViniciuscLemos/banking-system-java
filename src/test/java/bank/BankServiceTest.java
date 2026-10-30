@@ -190,6 +190,19 @@ class BankServiceTest {
     }
 
     @Test
+    void statementSinceADay() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.of(2026, 10, 30, 12, 0);
+        List<Transaction> statement = List.of(
+            new Transaction("1", "A", null, Transaction.TransactionType.DEPOSIT, money("10"), money("10"), "new", now),
+            new Transaction("2", "A", null, Transaction.TransactionType.DEPOSIT, money("5"), money("5"), "old", now.minusDays(40))
+        );
+        List<Transaction> recent = BankService.since(statement, now.minusDays(30));
+        assertEquals(1, recent.size());
+        assertEquals("new", recent.get(0).getDescription());
+        assertEquals(2, BankService.since(statement, now.minusDays(40)).size());
+    }
+
+    @Test
     void findsAccountByIdOrCpf() {
         Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("0"));
         assertEquals(maria.getId(), service.findByIdOrCpf(maria.getId().toLowerCase()).orElseThrow().getId());

@@ -6,6 +6,7 @@ import bank.model.Transaction;
 import bank.repository.BankRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,11 @@ public class BankService {
     public List<Transaction> getStatement(String accountId) {
         findOrThrow(accountId);
         return repo.listStatement(accountId);
+    }
+
+    /** Only the lines from `from` on, for "the last N days" in the menu. */
+    public static List<Transaction> since(List<Transaction> statement, LocalDateTime from) {
+        return statement.stream().filter(t -> !t.getCreatedAt().isBefore(from)).toList();
     }
 
     public record Totals(BigDecimal moneyIn, BigDecimal moneyOut) {}

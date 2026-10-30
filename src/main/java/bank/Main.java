@@ -169,6 +169,21 @@ public class Main {
 
         try {
             List<Transaction> statement = service.getStatement(account.getId());
+            System.out.print("Only the last N days? (Enter for everything): ");
+            String days = scanner.nextLine().trim();
+            if (!days.isEmpty()) {
+                int n;
+                try {
+                    n = Integer.parseInt(days);
+                } catch (NumberFormatException e) {
+                    n = -1;
+                }
+                if (n < 1) {
+                    System.out.println(Colors.red("Type a number of days, like 30. Cancelled."));
+                    return;
+                }
+                statement = BankService.since(statement, java.time.LocalDate.now().minusDays(n - 1L).atStartOfDay());
+            }
 
             List<String> lines = statement.stream().map(Transaction::toString).toList();
             // the line follows the longest row, since the descriptions vary in size
