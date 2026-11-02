@@ -43,6 +43,7 @@ The colors only show up in a real terminal, so `java -jar banking-system.jar > o
 
 - I used `BigDecimal` for money instead of `double`, because `double` has rounding errors (like `0.1 + 0.2` being `0.30000000000000004`).
 - The transfer runs inside a database transaction: either both accounts are updated, or neither is.
+- At most $5,000 can leave an account per day, counting withdrawals and transfers out together, the way banks limit the damage of a stolen card. Deposits don't raise it back, and the statement shows how much is still available today.
 - Each account is tied to a CPF (the Brazilian taxpayer ID). It's validated by its check digits, and you can't open two accounts with the same CPF.
 - When typing amounts, you can use `1500`, `1500.50` or `1,500.50`.
 
