@@ -6,12 +6,19 @@ import bank.model.Transaction;
 import bank.repository.BankRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 /** The bank rules (validations, transfers...). The SQL lives in the repository. */
 public class BankService {
+
+    /**
+     * How much can leave an account in one day, adding withdrawals and transfers out.
+     * Banks do this so a stolen card or password can't empty the account at once.
+     */
+    public static final BigDecimal DAILY_LIMIT = new BigDecimal("5000.00");
 
     private final BankRepository repo;
 
@@ -69,6 +76,7 @@ public class BankService {
 
     public Account withdraw(String accountId, BigDecimal amount, String description) {
         Account account = findOrThrow(accountId);
+        checkDailyLimit(account, amount);
         account.withdraw(amount);
 
         return repo.inTransaction(() -> {
@@ -96,6 +104,7 @@ public class BankService {
             throw new IllegalStateException("Target account is closed");
         }
 
+        checkDailyLimit(source, amount);
         source.withdraw(amount);
         target.deposit(amount);
 
@@ -175,6 +184,24 @@ public class BankService {
             .filter(Account::isActive)
             .map(Account::getBalance)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /** What can still leave the account today. */
+    public BigDecimal availableToday(String accountId) {
+        BigDecimal used = since(repo.listStatement(accountId), LocalDate.now().atStartOfDay()).stream()
+            .filter(t -> !t.isCredit())
+            .map(Transaction::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return DAILY_LIMIT.subtract(used).max(BigDecimal.ZERO);
+    }
+
+    private void checkDailyLimit(Account account, BigDecimal amount) {
+        if (amount == null || amount.signum() <= 0) return;  // Account.withdraw explains that one
+        BigDecimal left = availableToday(account.getId());
+        if (amount.compareTo(left) > 0) {
+            throw new IllegalStateException("Daily limit of " + Money.format(DAILY_LIMIT)
+                + " reached. Still available today: " + Money.format(left));
+        }
     }
 
     private Account findOrThrow(String id) {

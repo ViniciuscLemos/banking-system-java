@@ -205,6 +205,7 @@ public class Main {
                 System.out.println("Money out: " + Colors.red(Money.format(totals.moneyOut())));
             }
             System.out.println("Current balance: " + Money.format(account.getBalance()));
+            System.out.println("Can still take out today: " + Money.format(service.availableToday(account.getId())));
         } catch (RuntimeException e) {
             System.out.println(Colors.red("Error: " + e.getMessage()));
         }

@@ -210,4 +210,28 @@ class BankServiceTest {
         assertTrue(service.findByIdOrCpf(CPF_JOAO).isEmpty());
         assertTrue(service.findByIdOrCpf("nope").isEmpty());
     }
+
+    @Test
+    void withdrawalsAndTransfersShareTheDailyLimit() {
+        Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("10000"));
+        Account joao = service.openAccount("João", CPF_JOAO, Account.AccountType.CHECKING, money("0"));
+
+        service.withdraw(maria.getId(), money("3000"), null);
+        service.transfer(maria.getId(), joao.getId(), money("1500"));
+        assertEquals(money("500.00"), service.availableToday(maria.getId()));
+
+        IllegalStateException error = assertThrows(IllegalStateException.class,
+            () -> service.withdraw(maria.getId(), money("600"), null));
+        assertTrue(error.getMessage().contains("Still available today: $500.00"));
+        // nothing moved on the refused withdrawal
+        assertEquals(money("5500.00"), service.findById(maria.getId()).orElseThrow().getBalance());
+
+        // exactly up to the limit is fine, and money coming in doesn't raise it
+        service.deposit(maria.getId(), money("1000"), null);
+        service.withdraw(maria.getId(), money("500"), null);
+        assertThrows(IllegalStateException.class, () -> service.transfer(maria.getId(), joao.getId(), money("0.01")));
+
+        // the other account has its own limit
+        service.withdraw(joao.getId(), money("1500"), null);
+    }
 }
