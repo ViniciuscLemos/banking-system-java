@@ -37,6 +37,8 @@ class ModelTest {
         assertEquals(new BigDecimal("1500.50"), Money.parse("1500.50"));
         assertEquals(new BigDecimal("1500.50"), Money.parse("$ 1500.50"));
         assertEquals(new BigDecimal("1500.50"), Money.parse("1500,50"));
+        assertEquals(new BigDecimal("1500.50"), Money.parse("1.500,50"));
+        assertEquals(new BigDecimal("1234567.89"), Money.parse("1.234.567,89"));
         assertEquals(new BigDecimal("1500"), Money.parse("1,500"));
         assertEquals(new BigDecimal("1.5"), Money.parse("1.5"));
         assertEquals(new BigDecimal("10"), Money.parse(" 10 "));

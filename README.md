@@ -45,7 +45,7 @@ The colors only show up in a real terminal, so `java -jar banking-system.jar > o
 - The transfer runs inside a database transaction: either both accounts are updated, or neither is.
 - At most $5,000 can leave an account per day, counting withdrawals and transfers out together, the way banks limit the damage of a stolen card. Deposits don't raise it back, and the statement shows how much is still available today.
 - Each account is tied to a CPF (the Brazilian taxpayer ID). It's validated by its check digits, and you can't open two accounts with the same CPF.
-- When typing amounts, you can use `1500`, `1500.50` or `1,500.50`.
+- When typing amounts, you can use `1500`, `1500.50` or `1,500.50`, and also the Brazilian `1500,50` and `1.500,50`.
 
 ## Structure
 

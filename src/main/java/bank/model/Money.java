@@ -13,10 +13,14 @@ public final class Money {
         return NumberFormat.getCurrencyInstance(Locale.US).format(amount);
     }
 
-    /** Accepts "1500", "1500.50", "1,500.50", "$1,500.50" and also "1500,50". */
+    /** Accepts "1500", "1500.50", "1,500.50", "$1,500.50" and also "1500,50" and "1.500,50". */
     public static BigDecimal parse(String text) {
         String clean = text.trim().replace("$", "").replace(" ", "");
-        if (clean.contains(".")) {
+        if (clean.contains(".") && clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+            // "1.500,50": the Brazilian way, dots for thousands and the comma for cents.
+            // Before this it became 1.50050, a deposit of a dollar and a half
+            clean = clean.replace(".", "").replace(",", ".");
+        } else if (clean.contains(".")) {
             clean = clean.replace(",", "");  // "1,500.50": the comma only separates thousands
         } else if (clean.matches("\\d{1,3}(,\\d{3})+")) {
             clean = clean.replace(",", "");  // "1,500" = one thousand five hundred
