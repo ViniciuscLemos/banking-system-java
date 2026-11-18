@@ -190,6 +190,20 @@ class BankServiceTest {
     }
 
     @Test
+    void statementAsCsv() {
+        java.time.LocalDateTime day = java.time.LocalDateTime.of(2026, 11, 10, 9, 30, 15, 123_000_000);
+        List<Transaction> statement = List.of(
+            new Transaction("2", "A", null, Transaction.TransactionType.WITHDRAWAL, money("1200"), money("300"), "Rent, November", day.plusDays(1)),
+            new Transaction("1", "A", null, Transaction.TransactionType.DEPOSIT, money("1500"), money("1500"), "Salary", day)
+        );
+        assertEquals(
+            "date,type,amount,balance,description\n"
+            + "2026-11-10 09:30:15,deposit,1500.00,1500.00,Salary\n"
+            + "2026-11-11 09:30:15,withdrawal,-1200.00,300.00,\"Rent, November\"\n",
+            BankService.statementCsv(statement));
+    }
+
+    @Test
     void statementSinceADay() {
         java.time.LocalDateTime now = java.time.LocalDateTime.of(2026, 10, 30, 12, 0);
         List<Transaction> statement = List.of(

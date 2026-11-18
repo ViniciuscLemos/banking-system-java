@@ -206,8 +206,21 @@ public class Main {
             }
             System.out.println("Current balance: " + Money.format(account.getBalance()));
             System.out.println("Can still take out today: " + Money.format(service.availableToday(account.getId())));
+            if (!statement.isEmpty()) saveStatement(account, statement);
         } catch (RuntimeException e) {
             System.out.println(Colors.red("Error: " + e.getMessage()));
+        }
+    }
+
+    private static void saveStatement(Account account, List<Transaction> statement) {
+        System.out.print("Save it as a CSV for a spreadsheet? (y/N): ");
+        if (!scanner.nextLine().trim().equalsIgnoreCase("y")) return;
+        java.nio.file.Path file = java.nio.file.Path.of("statement-" + account.getId() + ".csv");
+        try {
+            java.nio.file.Files.writeString(file, BankService.statementCsv(statement));
+            System.out.println(Colors.green("Saved to " + file.toAbsolutePath()));
+        } catch (java.io.IOException e) {
+            System.out.println(Colors.red("Couldn't save the file: " + e.getMessage()));
         }
     }
 

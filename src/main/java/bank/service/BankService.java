@@ -145,6 +145,39 @@ public class BankService {
         return statement.stream().filter(t -> !t.getCreatedAt().isBefore(from)).toList();
     }
 
+    /**
+     * The statement as CSV, oldest first, to open in a spreadsheet. Plain numbers with a dot
+     * (no $ or thousands comma), so the spreadsheet can add them up. Money out is negative.
+     */
+    // fixed format: LocalDateTime.toString() drops the seconds when they're :00
+    private static final java.time.format.DateTimeFormatter CSV_DATE =
+        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static String statementCsv(List<Transaction> statement) {
+        StringBuilder csv = new StringBuilder("date,type,amount,balance,description\n");
+        List<Transaction> oldestFirst = statement.stream()
+            .sorted(java.util.Comparator.comparing(Transaction::getCreatedAt))
+            .toList();
+        for (Transaction t : oldestFirst) {
+            BigDecimal amount = t.isCredit() ? t.getAmount() : t.getAmount().negate();
+            csv.append(t.getCreatedAt().format(CSV_DATE)).append(',')
+               .append(t.getType().name().toLowerCase(java.util.Locale.ROOT)).append(',')
+               .append(amount.toPlainString()).append(',')
+               .append(t.getBalanceAfter().toPlainString()).append(',')
+               .append(csvText(t.getDescription())).append('\n');
+        }
+        return csv.toString();
+    }
+
+    // quotes only when needed; a description can have a comma ("Rent, October")
+    private static String csvText(String text) {
+        if (text == null) return "";
+        if (text.contains(",") || text.contains("\"") || text.contains("\n")) {
+            return "\"" + text.replace("\"", "\"\"") + "\"";
+        }
+        return text;
+    }
+
     public record Totals(BigDecimal moneyIn, BigDecimal moneyOut) {}
 
     /** What came in and what went out, for the bottom of the statement. */
