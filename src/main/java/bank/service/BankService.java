@@ -42,7 +42,13 @@ public class BankService {
             throw new IllegalStateException("There's already an account with this CPF");
         }
 
-        Account account = new Account(holder.trim(), cleanCpf, type, deposit);
+        // "maria  silva " typed in a hurry is saved as "maria silva", so the list and the
+        // statement don't show odd gaps
+        String name = holder.trim().replaceAll("\\s+", " ");
+        if (name.length() > 100) {
+            throw new IllegalArgumentException("Account holder name can have at most 100 characters");
+        }
+        Account account = new Account(name, cleanCpf, type, deposit);
 
         return repo.inTransaction(() -> {
             repo.saveAccount(account);

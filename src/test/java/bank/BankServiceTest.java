@@ -190,6 +190,14 @@ class BankServiceTest {
     }
 
     @Test
+    void holderNameIsTidiedUp() {
+        Account maria = service.openAccount("  Maria \t  da   Silva ", CPF_MARIA, Account.AccountType.CHECKING, money("0"));
+        assertEquals("Maria da Silva", maria.getHolder());
+        assertThrows(IllegalArgumentException.class,
+            () -> service.openAccount("x".repeat(101), CPF_JOAO, Account.AccountType.CHECKING, money("0")));
+    }
+
+    @Test
     void statementAsCsv() {
         java.time.LocalDateTime day = java.time.LocalDateTime.of(2026, 11, 10, 9, 30, 15, 123_000_000);
         List<Transaction> statement = List.of(
