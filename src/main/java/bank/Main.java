@@ -149,6 +149,8 @@ public class Main {
         System.out.print("Amount: $");
         BigDecimal amount = readAmount();
         if (amount == null) return;
+        System.out.print("Note for the statement, like \"rent\" (Enter for none): ");
+        String note = scanner.nextLine();
 
         // shows who's receiving it first, like banking apps do
         System.out.printf("Transfer %s from %s to %s? (y/N): ",
@@ -159,7 +161,7 @@ public class Main {
         }
 
         try {
-            service.transfer(source.getId(), target.getId(), amount);
+            service.transfer(source.getId(), target.getId(), amount, note);
             System.out.println("\nTransfer done!");
         } catch (RuntimeException e) {
             System.out.println(Colors.red("Error: " + e.getMessage()));

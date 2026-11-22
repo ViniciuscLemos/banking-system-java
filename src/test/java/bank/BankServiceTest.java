@@ -122,6 +122,20 @@ class BankServiceTest {
     }
 
     @Test
+    void transferNoteGoesOnBothStatements() {
+        Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("1500"));
+        Account joao = service.openAccount("João", CPF_JOAO, Account.AccountType.SAVINGS, money("0"));
+        service.transfer(maria.getId(), joao.getId(), money("700"), "  rent   November ");
+        assertTrue(service.getStatement(maria.getId()).stream()
+            .anyMatch(t -> t.getDescription().endsWith("(João) - rent November")));
+        assertTrue(service.getStatement(joao.getId()).stream()
+            .anyMatch(t -> t.getDescription().endsWith("(Maria) - rent November")));
+        assertThrows(IllegalArgumentException.class,
+            () -> service.transfer(maria.getId(), joao.getId(), money("1"), "x".repeat(61)));
+        assertEquals(money("800.00"), service.findById(maria.getId()).orElseThrow().getBalance());
+    }
+
+    @Test
     void invalidTransferChangesNothing() {
         Account maria = service.openAccount("Maria", CPF_MARIA, Account.AccountType.CHECKING, money("100"));
         Account joao = service.openAccount("João", CPF_JOAO, Account.AccountType.CHECKING, money("0"));

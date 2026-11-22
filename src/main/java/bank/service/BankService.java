@@ -99,6 +99,15 @@ public class BankService {
 
     /** Both accounts and both statement lines are saved together, in a single transaction. */
     public void transfer(String sourceId, String targetId, BigDecimal amount) {
+        transfer(sourceId, targetId, amount, null);
+    }
+
+    /** With a note ("rent", "pizza") that goes on both statement lines. */
+    public void transfer(String sourceId, String targetId, BigDecimal amount, String note) {
+        String suffix = note == null || note.isBlank() ? "" : " - " + note.trim().replaceAll("\\s+", " ");
+        if (suffix.length() > 63) {
+            throw new IllegalArgumentException("The note can have at most 60 characters");
+        }
         if (sourceId.equals(targetId)) {
             throw new IllegalArgumentException("Source and target accounts can't be the same");
         }
@@ -122,13 +131,13 @@ public class BankService {
                 source.getId(), target.getId(),
                 Transaction.TransactionType.TRANSFER_OUT,
                 amount, source.getBalance(),
-                "Transfer to " + target.getId() + " (" + target.getHolder() + ")"
+                "Transfer to " + target.getId() + " (" + target.getHolder() + ")" + suffix
             ));
             repo.saveTransaction(new Transaction(
                 target.getId(), source.getId(),
                 Transaction.TransactionType.TRANSFER_IN,
                 amount, target.getBalance(),
-                "Transfer from " + source.getId() + " (" + source.getHolder() + ")"
+                "Transfer from " + source.getId() + " (" + source.getHolder() + ")" + suffix
             ));
             return null;
         });
