@@ -26,6 +26,14 @@ class ModelTest {
     }
 
     @Test
+    void accountTypeFromWhatWasTyped() {
+        assertEquals(Account.AccountType.CHECKING, Account.AccountType.parse(" 1 "));
+        assertEquals(Account.AccountType.SAVINGS, Account.AccountType.parse("Savings"));
+        assertNull(Account.AccountType.parse("3"));
+        assertNull(Account.AccountType.parse(""));
+    }
+
+    @Test
     void formatsAsDollars() {
         assertEquals("$1,234.56", Money.format(new BigDecimal("1234.56")));
         assertEquals("$0.00", Money.format(BigDecimal.ZERO));

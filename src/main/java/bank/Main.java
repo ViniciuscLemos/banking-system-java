@@ -83,9 +83,13 @@ public class Main {
         String name = scanner.nextLine();
         System.out.print("CPF: ");
         String cpf = scanner.nextLine();
-        System.out.print("Type (1-Checking / 2-Savings): ");
-        String typeStr = scanner.nextLine().trim();
-        Account.AccountType type = typeStr.equals("2") ? Account.AccountType.SAVINGS : Account.AccountType.CHECKING;
+        // anything but 2 used to open a checking account without a word, a typo included
+        Account.AccountType type = null;
+        while (type == null) {
+            System.out.print("Type (1-Checking / 2-Savings): ");
+            type = Account.AccountType.parse(scanner.nextLine());
+            if (type == null) System.out.println(Colors.red("Type 1 for checking or 2 for savings."));
+        }
         System.out.print("Initial deposit (0 for none): $");
         BigDecimal deposit = readAmount();
         if (deposit == null) return;

@@ -9,7 +9,17 @@ public class Account {
 
     public enum AccountType {
         CHECKING,
-        SAVINGS
+        SAVINGS;
+
+        /** "1", "2", "checking" or "savings" (any case); null for anything else. */
+        public static AccountType parse(String text) {
+            String t = text == null ? "" : text.trim().toLowerCase(java.util.Locale.ROOT);
+            return switch (t) {
+                case "1", "checking", "c" -> CHECKING;
+                case "2", "savings", "s" -> SAVINGS;
+                default -> null;
+            };
+        }
     }
 
     private final String id;
