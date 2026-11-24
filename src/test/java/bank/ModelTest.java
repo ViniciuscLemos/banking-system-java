@@ -51,6 +51,9 @@ class ModelTest {
         assertEquals(new BigDecimal("1.5"), Money.parse("1.5"));
         assertEquals(new BigDecimal("10"), Money.parse(" 10 "));
         assertThrows(NumberFormatException.class, () -> Money.parse("ten"));
+        assertThrows(NumberFormatException.class, () -> Money.parse("1e5"));
+        assertThrows(NumberFormatException.class, () -> Money.parse("+10"));
+        assertThrows(NumberFormatException.class, () -> Money.parse("-5"));
     }
 
     @Test

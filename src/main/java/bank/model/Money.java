@@ -16,6 +16,11 @@ public final class Money {
     /** Accepts "1500", "1500.50", "1,500.50", "$1,500.50" and also "1500,50" and "1.500,50". */
     public static BigDecimal parse(String text) {
         String clean = text.trim().replace("$", "").replace(" ", "");
+        // BigDecimal also reads "1e5" and "+10": a typo with an e deposited 100,000.
+        // An amount here is digits with dots and commas, nothing else
+        if (!clean.matches("[0-9][0-9.,]*")) {
+            throw new NumberFormatException("not an amount: " + text);
+        }
         if (clean.contains(".") && clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
             // "1.500,50": the Brazilian way, dots for thousands and the comma for cents.
             // Before this it became 1.50050, a deposit of a dollar and a half
