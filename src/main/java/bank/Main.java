@@ -190,6 +190,9 @@ public class Main {
                 }
                 statement = BankService.since(statement, java.time.LocalDate.now().minusDays(n - 1L).atStartOfDay());
             }
+            // the notes on transfers made this worth it: how much went to "rent" this year?
+            System.out.print("Only lines with this text, like \"rent\"? (Enter for all): ");
+            statement = BankService.matching(statement, scanner.nextLine());
 
             List<String> lines = statement.stream().map(Transaction::toString).toList();
             // the line follows the longest row, since the descriptions vary in size

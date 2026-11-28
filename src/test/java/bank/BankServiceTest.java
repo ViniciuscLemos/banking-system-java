@@ -226,6 +226,20 @@ class BankServiceTest {
     }
 
     @Test
+    void statementLinesWithAText() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.of(2026, 11, 28, 9, 0);
+        List<Transaction> statement = List.of(
+            new Transaction("1", "A", null, Transaction.TransactionType.WITHDRAWAL, money("1200"), money("300"), "Aluguel de outubro", now),
+            new Transaction("2", "A", null, Transaction.TransactionType.WITHDRAWAL, money("80"), money("220"), "Conta de água", now),
+            new Transaction("3", "A", null, Transaction.TransactionType.DEPOSIT, money("10"), money("230"), null, now)
+        );
+        assertEquals(List.of("Aluguel de outubro"), BankService.matching(statement, " ALUGUEL ").stream().map(Transaction::getDescription).toList());
+        assertEquals(List.of("Conta de água"), BankService.matching(statement, "agua").stream().map(Transaction::getDescription).toList());
+        assertEquals(3, BankService.matching(statement, "").size());
+        assertTrue(BankService.matching(statement, "pix").isEmpty());
+    }
+
+    @Test
     void statementSinceADay() {
         java.time.LocalDateTime now = java.time.LocalDateTime.of(2026, 10, 30, 12, 0);
         List<Transaction> statement = List.of(

@@ -161,6 +161,24 @@ public class BankService {
     }
 
     /**
+     * Only the lines whose description has this text, ignoring case and accents, so
+     * "aluguel" finds "Aluguel de outubro" and "agua" finds "Conta de água".
+     */
+    public static List<Transaction> matching(List<Transaction> statement, String text) {
+        String wanted = folded(text);
+        if (wanted.isEmpty()) return statement;
+        return statement.stream()
+            .filter(t -> t.getDescription() != null && folded(t.getDescription()).contains(wanted))
+            .toList();
+    }
+
+    private static String folded(String text) {
+        return java.text.Normalizer.normalize(text == null ? "" : text.trim(), java.text.Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toLowerCase(java.util.Locale.ROOT);
+    }
+
+    /**
      * The statement as CSV, oldest first, to open in a spreadsheet. Plain numbers with a dot
      * (no $ or thousands comma), so the spreadsheet can add them up. Money out is negative.
      */

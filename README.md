@@ -25,7 +25,7 @@ mvn test
 
 ## What it looks like
 
-A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red (and the total of each at the bottom). It also asks if you want only the last N days, and at the end it can save the statement as a CSV that opens straight in a spreadsheet (plain numbers, money out negative):
+A withdrawal, a typo in the amount and the statement, with money in shown in green and money out in red (and the total of each at the bottom). It also asks if you want only the last N days or only the lines with some text ("rent" finds every rent transfer, accents and case don't matter), and at the end it can save the statement as a CSV that opens straight in a spreadsheet (plain numbers, money out negative):
 
 ![A withdrawal, an invalid amount and the statement in the terminal](docs/screenshot.png)
 
